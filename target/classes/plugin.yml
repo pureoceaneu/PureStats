@@ -1,0 +1,5 @@
+name: PureOceanStats
+version: '1.0-SNAPSHOT'
+main: me.lakoba.pureOceanStats.PureOceanStats
+api-version: '1.21'
+prefix: PureOceanStats
