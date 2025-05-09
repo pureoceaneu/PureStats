@@ -38,7 +38,11 @@ public class StorageManager {
             Long time = config.getLong(key + ".time");
             int lastDeath = config.getInt(key + ".lastDeath");
             int mobsKilled = config.getInt(key + ".mobsKilled");
-            map.put(uuid, new PlayerStats(uuid, name, kills, deaths, playtime, isOnline, world, time, lastDeath, mobsKilled));
+            boolean isAfk = config.getBoolean(key + ".isAfk", false);
+            Long afkTime = config.getLong(key + ".afkTime", 0L);
+            Long activeTime = config.getLong(key + ".activeTime", 0L);
+            
+            map.put(uuid, new PlayerStats(uuid, name, kills, deaths, playtime, isOnline, world, time, lastDeath, mobsKilled, isAfk, afkTime, activeTime));
         }
         return map;
     }
@@ -61,6 +65,9 @@ public class StorageManager {
             config.set(path + ".time", stats.getLastPlayed());
             config.set(path + ".lastDeath", stats.getLastDeath());
             config.set(path + ".mobsKilled", stats.getMobsKilled());
+            config.set(path + ".isAfk", stats.isAfk());
+            config.set(path + ".afkTime", stats.getAfkTime());
+            config.set(path + ".activeTime", stats.getActiveTime());
         }
         try {
             config.save(file);

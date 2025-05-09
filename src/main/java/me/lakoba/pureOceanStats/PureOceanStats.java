@@ -17,8 +17,10 @@ public final class PureOceanStats extends JavaPlugin {
         getLogger().info("[PureOceanStats] Plugin enabled");
         this.startTime = System.currentTimeMillis();
 
+        saveDefaultConfig();
+        
         StorageManager storage = new StorageManager(getDataFolder());
-        this.statsManager = new PlayerStatsManager(storage);
+        this.statsManager = new PlayerStatsManager(storage, this);
         statsManager.updateAll();
 
         Bukkit.getPluginManager().registerEvents(new StatsListener(statsManager), this);
@@ -30,9 +32,16 @@ public final class PureOceanStats extends JavaPlugin {
                 statsManager.save();
                 getLogger().info("[PureOceanStats] Autosave complete.");
             }
-        }.runTaskTimer(this, 0, 6000); // 6000 ticks = 5 minut
+        }.runTaskTimer(this, 0, 6000);
+        
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                statsManager.checkAndUpdateAfkStatus();
+            }
+        }.runTaskTimer(this, 100, 100);
 
-        Spark.port(4567);
+        Spark.port(4576);
 
         Spark.get("/api/stats", (req, res) -> {
             res.type("application/json");
@@ -54,6 +63,12 @@ public final class PureOceanStats extends JavaPlugin {
                 obj.addProperty("playtimeTicks", stats.getPlaytimeTicks());
                 obj.addProperty("avatarUrl", stats.getAvatarUrl());
                 obj.addProperty("isOnline", stats.isOnline());
+                obj.addProperty("isAfk", stats.isAfk());
+                obj.addProperty("afkTimeMs", stats.getAfkTime());
+                obj.addProperty("activeTimeMs", stats.getActiveTime());
+                obj.addProperty("afkTimeSec", stats.getAfkTime() / 1000);
+                obj.addProperty("activeTimeSec", stats.getActiveTime() / 1000);
+                obj.addProperty("activeTimeRatio", stats.getActiveTimeRatio());
                 obj.addProperty("world", stats.getWorld());
                 obj.addProperty("lastPlayed", stats.getLastPlayed());
                 obj.addProperty("lastDeath", stats.getLastDeath());

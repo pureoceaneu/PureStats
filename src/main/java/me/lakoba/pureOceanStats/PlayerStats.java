@@ -13,8 +13,12 @@ public class PlayerStats {
     private final Long lastPlayed;
     private final Integer lastDeath;
     private final Integer mobsKilled;
+    private final Boolean isAfk;
+    private final Long afkTime;
+    private final Long activeTime;
 
-    public PlayerStats(UUID uuid, String name, int kills, int deaths, int playtimeTicks, boolean isOnline, String world, Long lastPlayed, int lastDeath, int mobsKilled) {
+    public PlayerStats(UUID uuid, String name, int kills, int deaths, int playtimeTicks, boolean isOnline, String world, 
+                      Long lastPlayed, int lastDeath, int mobsKilled, boolean isAfk, Long afkTime, Long activeTime) {
         this.uuid = uuid;
         this.name = name;
         this.kills = kills;
@@ -25,6 +29,9 @@ public class PlayerStats {
         this.lastPlayed = lastPlayed;
         this.lastDeath = lastDeath;
         this.mobsKilled = mobsKilled;
+        this.isAfk = isAfk;
+        this.afkTime = afkTime;
+        this.activeTime = activeTime;
     }
 
     public UUID getUuid() {
@@ -48,7 +55,7 @@ public class PlayerStats {
     }
 
     public String getAvatarUrl() {
-        return "https://crafatar.com/avatars/" + uuid.toString();
+        return "https://cravatar.eu/avatar/" + name.toString();
     }
 
     public Boolean isOnline() {
@@ -58,13 +65,34 @@ public class PlayerStats {
     public String getWorld() {
         return world;
     }
+
     public Long getLastPlayed() {
         return lastPlayed;
     }
+
     public Integer getLastDeath() {
         return lastDeath;
     }
+
     public Integer getMobsKilled() {
         return mobsKilled;
+    }
+
+    public Boolean isAfk() {
+        return isAfk;
+    }
+
+    public Long getAfkTime() {
+        return afkTime;
+    }
+
+    public Long getActiveTime() {
+        return activeTime;
+    }
+
+    public double getActiveTimeRatio() {
+        long totalTime = activeTime + afkTime;
+        if (totalTime == 0) return 1.0;
+        return (double) activeTime / totalTime;
     }
 }
